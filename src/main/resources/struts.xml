@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+   "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+   "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<constant name="struts.devMode" value="true" />
+	<constant name="struts.objectFactory"
+		value="org.apache.struts2.spring.StrutsSpringObjectFactory" />
+	<package name="/" extends="struts-default">
+		<action name="test" class="testAction"
+			method="execute">
+			<result name="success">/pages/test/test.html</result>
+		</action>
+	</package>
+	
+	<!-- ajax -->
+	<package name="test" extends="json-default">
+        <action name="loadMenuTree" class="loadMenuTree">
+            <result type="json">
+                <param name="root">json</param>
+            </result>
+        </action>
+        <action name="loadCollar" class="loadCollar">
+            <result type="json">
+                <param name="root">json</param>
+            </result>
+        </action>
+    </package>
+</struts>

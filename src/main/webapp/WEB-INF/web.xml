@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
+                http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee">
+
+	<display-name>web</display-name>
+
+	<!-- 与CAS Single Sign Out Filter配合，注销登录信息 -->
+	<listener>
+		<listener-class>org.jasig.cas.client.session.SingleSignOutHttpSessionListener</listener-class>
+	</listener>
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath*:applicationContext*.xml</param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<!-- <listener> <listener-class>com.infohold.hrm.listener.SystemListener</listener-class> 
+		</listener> -->
+
+	<!-- 字符集过滤器 -->
+	<!-- <filter> <filter-name>CharsetFilter</filter-name> <filter-class>com.infohold.hrm.filter.CharsetFilter</filter-class> 
+		</filter> <filter-mapping> <filter-name>CharsetFilter</filter-name> <url-pattern>/*</url-pattern> 
+		</filter-mapping> -->
+
+	<!-- CAS Server 通知 CAS Client，删除session,注销登录信息 -->
+	<filter>
+		<filter-name>CAS Single Sign Out Filter</filter-name>
+		<filter-class>org.jasig.cas.client.session.SingleSignOutFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>CAS Single Sign Out Filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- 登录认证，未登录用户导向CAS Server进行认证 -->
+	<filter>
+		<filter-name>CAS Filter</filter-name>
+		<filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
+		<init-param>
+			<param-name>casServerLoginUrl</param-name>
+			<!-- <param-value>http://218.25.139.95:10046/timesportalsso/login</param-value>
+				门户登录页 -->
+			<param-value>http://portal.smallpay.com/timesportalsso/login</param-value><!-- 
+				门户登录页 -->
+		</init-param>
+		<init-param>
+			<param-name>serverName</param-name>
+			<param-value>http://localhost:8080</param-value><!-- 子系统工程 -->
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>CAS Filter</filter-name>
+		<url-pattern>*.html</url-pattern>
+		<url-pattern>*.jsp</url-pattern>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CAS Filter</filter-name>
+		<url-pattern>/</url-pattern>
+	</filter-mapping>
+
+	<!-- CAS Client向CAS Server进行ticket验证 -->
+	<filter>
+		<filter-name>CAS Validation Filter</filter-name>
+		<filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
+		<init-param>
+			<param-name>casServerUrlPrefix</param-name>
+			<!-- <param-value>http://218.25.139.95:10046/timesportalsso/</param-value>
+				门户域 -->
+			<param-value>http://portal.smallpay.com/timesportalsso/</param-value><!-- 
+				门户域 -->
+		</init-param>
+		<init-param>
+			<param-name>serverName</param-name>
+			<param-value>http://localhost:8080</param-value><!-- 子系统工程 -->
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>CAS Validation Filter</filter-name>
+		<url-pattern>*.html</url-pattern>
+		<url-pattern>*.jsp</url-pattern>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CAS Validation Filter</filter-name>
+		<url-pattern>/</url-pattern>
+	</filter-mapping>
+
+	<!-- 封装request, 支持getUserPrincipal等方法 -->
+	<filter>
+		<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+		<filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- 存放Assertion到ThreadLocal中 -->
+	<filter>
+		<filter-name>CAS Assertion Thread Local Filter</filter-name>
+		<filter-class>org.jasig.cas.client.util.AssertionThreadLocalFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>CAS Assertion Thread Local Filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>AuthorityFilter</filter-name>
+		<filter-class>com.infohold.hrm.filter.AuthorityFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>AuthorityFilter</filter-name>
+		<url-pattern>*.html</url-pattern>
+		<url-pattern>*.jsp</url-pattern>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>AuthorityFilter</filter-name>
+		<url-pattern>/</url-pattern>
+	</filter-mapping>
+
+	<!-- Struts2 -->
+	<filter>
+		<filter-name>struts2</filter-name>
+		<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>struts2</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+
+	<!-- <filter> <filter-name>wicket.timesoa</filter-name> <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class> 
+		<init-param> <param-name>applicationClassName</param-name> <param-value>com.infohold.hrm.HRMWebApplication</param-value> 
+		</init-param> <init-param> <param-name>configuration</param-name> <param-value>deployment</param-value> 
+		</init-param> </filter> -->
+
+	<!-- <filter-mapping> <filter-name>wicket.timesoa</filter-name> <url-pattern>/*</url-pattern> 
+		</filter-mapping> -->
+
+	<!-- <context-param> <param-name>contextConfigLocation</param-name> <param-value> 
+		classpath:spring-beans.xml, classpath:spring-daos.xml, classpath:spring-servers.xml 
+		</param-value> </context-param> -->
+
+	<!-- <listener> <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class> 
+		</listener> -->
+	<!-- <servlet> <servlet-name>UploadedFile</servlet-name> <servlet-class>com.infohold.hrm.common.HrmUploadedFileServlet</servlet-class> 
+		</servlet> <servlet-mapping> <servlet-name>UploadedFile</servlet-name> <url-pattern>/uploader/*</url-pattern> 
+		</servlet-mapping> <servlet> <servlet-name>AddUser</servlet-name> <servlet-class>com.infohold.hrm.service.user.AddUser</servlet-class> 
+		</servlet> <servlet-mapping> <servlet-name>AddUser</servlet-name> <url-pattern>/adduser</url-pattern> 
+		</servlet-mapping> <servlet> <servlet-name>UpdateUser</servlet-name> <servlet-class>com.infohold.hrm.service.user.UpdateUser</servlet-class> 
+		</servlet> <servlet-mapping> <servlet-name>UpdateUser</servlet-name> <url-pattern>/updateuser</url-pattern> 
+		</servlet-mapping> <servlet> <servlet-name>DeleteUser</servlet-name> <servlet-class>com.infohold.hrm.service.user.DeleteUser</servlet-class> 
+		</servlet> <servlet-mapping> <servlet-name>DeleteUser</servlet-name> <url-pattern>/deleteuser</url-pattern> 
+		</servlet-mapping> <servlet> <servlet-name>AddOrg</servlet-name> <servlet-class>com.infohold.hrm.service.org.AddOrg</servlet-class> 
+		</servlet> <servlet-mapping> <servlet-name>AddOrg</servlet-name> <url-pattern>/addorg</url-pattern> 
+		</servlet-mapping> <servlet> <servlet-name>UpdateOrg</servlet-name> <servlet-class>com.infohold.hrm.service.org.UpdateOrg</servlet-class> 
+		</servlet> <servlet-mapping> <servlet-name>UpdateOrg</servlet-name> <url-pattern>/updateorg</url-pattern> 
+		</servlet-mapping> <servlet> <servlet-name>DeleteOrg</servlet-name> <servlet-class>com.infohold.hrm.service.org.DeleteOrg</servlet-class> 
+		</servlet> <servlet-mapping> <servlet-name>DeleteOrg</servlet-name> <url-pattern>/deleteorg</url-pattern> 
+		</servlet-mapping> <servlet> <servlet-name>HrmServiceSevlet</servlet-name> 
+		<servlet-class>com.infohold.hrm.common.HrmServiceSevlet</servlet-class> </servlet> 
+		<servlet-mapping> <servlet-name>HrmServiceSevlet</servlet-name> <url-pattern>/hrmapi</url-pattern> 
+		</servlet-mapping> -->
+
+	<servlet>
+		<servlet-name>testJsonRPC</servlet-name>
+		<servlet-class>com.infohold.hrm.test.TestJsonRPC</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>testJsonRPC</servlet-name>
+		<url-pattern>/testJsonRPC</url-pattern>
+	</servlet-mapping>
+
+</web-app>
