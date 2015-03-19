@@ -5,7 +5,6 @@ import com.infohold.hrm.common.ConfigUtil;
 import junit.framework.TestCase;
 
 public class TestConfigUtil extends TestCase {
-	System.out.println("test");
 	public void testInstance(){
 		ConfigUtil instance = ConfigUtil.instance();
 		assertNotNull(instance);
