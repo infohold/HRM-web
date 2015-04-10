@@ -1,32 +1,22 @@
 package com.infohold.hrm.actions.test;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import net.sf.json.JSONArray;
+import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts2.interceptor.CookiesAware;
-import org.apache.struts2.interceptor.RequestAware;
+import org.apache.struts2.interceptor.ServletResponseAware;
 import org.apache.struts2.interceptor.SessionAware;
 import org.springframework.stereotype.Component;
 
-import com.infohold.hrm.common.rpc.portalInterface.PortalOutputInterface;
-
 @Component("testAction")
-public class TestAction implements SessionAware{
+public class TestAction implements SessionAware, ServletResponseAware {
 	private String				json;
 	private Map<String, Object>	session;
+	private HttpServletResponse	response;
+	private String				str;
 
 	public String execute() throws Exception {
-		List<HashMap<String, Object>> menuList = PortalOutputInterface.getMenuListFromPortalByUserId(session);
-		if(menuList != null){
-			json = JSONArray.fromObject(menuList).toString();
-		}else{
-			json = "";
-		}
-		PortalOutputInterface.getCollarByUserId(session);
-		
+		System.out.println("str:"+str);
 		return "success";
 	}
 
@@ -37,5 +27,18 @@ public class TestAction implements SessionAware{
 	@Override
 	public void setSession(Map<String, Object> session) {
 		this.session = session;
+	}
+
+	@Override
+	public void setServletResponse(HttpServletResponse arg0) {
+		this.response = arg0;
+	}
+	
+	public String getStr() {
+		return str;
+	}
+
+	public void setStr(String str) {
+		this.str = str;
 	}
 }

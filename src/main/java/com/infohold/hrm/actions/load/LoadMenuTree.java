@@ -18,6 +18,7 @@ public class LoadMenuTree extends BaseAction {
 		List<HashMap<String, Object>> menuList = PortalOutputInterface.getMenuListFromPortalByUserId(session);
 		if (menuList != null) {
 			json = JSONArray.fromObject(menuList).toString();
+			System.out.println(json);
 		} else {
 			json = "";
 		}
